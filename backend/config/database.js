@@ -1,7 +1,6 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
-// Initialize Sequelize
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -24,15 +23,13 @@ const connectDB = async () => {
   }
 };
 
-// Sync Database
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true }); // Use { force: true } to reset tables
+    await sequelize.sync({ force: false });
     console.log("✅ Database Synced Successfully!");
   } catch (error) {
     console.error("❌ Error Syncing Database:", error);
   }
 };
 
-// Export Functions
 module.exports = { sequelize, connectDB, syncDatabase };

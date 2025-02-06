@@ -38,10 +38,14 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    // Create JWT token with expiration time
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
+    // Return the token with 'Bearer' prefix
     res.json({ 
       token: `Bearer ${token}`, 
       user: { id: user.id, name: user.name, email: user.email, role: user.role } 
