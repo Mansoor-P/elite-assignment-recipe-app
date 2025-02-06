@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const roleMiddleware = (roles) => {
   return (req, res, next) => {
+    // Get token from the headers (x-auth-token)
     const token = req.header("x-auth-token");
 
     if (!token) {
@@ -9,15 +10,18 @@ const roleMiddleware = (roles) => {
     }
 
     try {
+      // Verify the token with the secret key
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;  // Attach user to request object
 
-      // Check if user role matches the required roles
+      // Attach the decoded user information to the request object
+      req.user = decoded;
+
+      // Check if user role is in the allowed roles
       if (!roles.includes(req.user.role)) {
         return res.status(403).json({ message: "Access denied" });
       }
 
-      next();  // User has valid role, proceed to next middleware
+      next(); // User has valid role, proceed to next middleware
     } catch (error) {
       res.status(401).json({ message: "Token is not valid" });
     }

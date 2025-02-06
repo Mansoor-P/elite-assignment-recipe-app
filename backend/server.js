@@ -16,20 +16,26 @@ app.use(express.urlencoded({ extended: true }));
 
 // Default Route
 app.get("/", (req, res) => {
-  res.send("Welcome to Elite Tech Park E-commerce API");
+  res.send(`Welcome to Elite Tech Park E-commerce API at ${process.env.BASE_URL}`);
 });
 
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+// Product Routes
+const productRoutes = require("./routes/productRoutes");
+app.use("/api/products", productRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Something went wrong!" });
+});
+
 // Start Server
 const PORT = process.env.PORT || 5000; // Default to 5000 if PORT is not defined in .env
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-
-app.get("/", (req, res) => {
-  res.send(`Welcome to Elite Tech Park E-commerce API at ${BASE_URL}`);
-});
 
 const startServer = async () => {
   await connectDB(); // Connect to DB
