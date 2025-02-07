@@ -23,3 +23,22 @@ To get started with both the frontend and backend:
 1. Clone the repo:
    ```bash
    git clone https://github.com/Mansoor-P/elite-tech-park.git
+
+
+
+
+# REST API Endpoints
+
+## **Authentication Endpoints**
+
+### **User Authentication**
+- **Register User** → `POST /api/auth/signup`
+- **Login User** → `POST /api/auth/login`
+
+
+## **Product Management**
+
+### **Products (Public)**
+- **Get All Products** → `GET /api/products/list`
+- **Get Single Product** → `GET /api/products/:id`
+
