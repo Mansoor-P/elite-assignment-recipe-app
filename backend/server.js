@@ -15,8 +15,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Default Route
-app.get("/", (req, res) => {
-  res.send(`Welcome to Elite Tech Park E-commerce API at ${process.env.BASE_URL}`);
+app.get("/", async (req, res) => {
+  try {
+    res.send(
+      `Welcome to Elite Tech Park E-commerce API at ${process.env.BASE_URL}`
+    );
+  } catch (err) {
+    res.status(500).json({ message: "Error in default route" });
+  }
 });
 
 // Import Routes
@@ -29,8 +35,11 @@ app.use("/api/products", productRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ message: "Something went wrong!" });
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    message: err.message || "Something went wrong!",
+    error: err.stack || null,
+  });
 });
 
 // Start Server
@@ -38,10 +47,18 @@ const PORT = process.env.PORT || 5000; // Default to 5000 if PORT is not defined
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 const startServer = async () => {
-  await connectDB(); // Connect to DB
-  await syncDatabase(); // Sync Tables
+  try {
+    await connectDB(); // Connect to DB
+    await syncDatabase(); // Sync Tables
 
-  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`API Base URL: ${BASE_URL}`);
+    });
+  } catch (error) {
+    console.error("Error starting server:", error);
+    process.exit(1); // Exit process if there's an error starting the server
+  }
 };
 
 startServer();
